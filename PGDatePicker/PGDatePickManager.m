@@ -12,6 +12,9 @@
 @property (nonatomic, weak) UIView *contentView;
 @property (nonatomic, weak) PGDatePickManagerHeaderView *headerView;
 @property (nonatomic, weak) UIView *dismissView;
+
+/** 是否是点击确认 */
+@property (nonatomic, assign) BOOL isConfirm;
 @end
 
 @implementation PGDatePickManager
@@ -51,14 +54,16 @@
 }
 
 - (void)headerViewButtonHandler {
-    __weak id weak_self = self;
+    __weak typeof(self) weak_self = self;
     self.headerView.cancelButtonHandlerBlock = ^{
-        __strong id strong_self = weak_self;
+        __strong typeof(self) strong_self = weak_self;
+        strong_self.isConfirm = NO;
         [strong_self cancelButtonHandler];
     };
     self.headerView.confirmButtonHandlerBlock =^{
-        __strong PGDatePickManager *strong_self = weak_self;
+        __strong typeof(self) strong_self = weak_self;
         [strong_self.datePicker tapSelectedHandler];
+        strong_self.isConfirm = YES;
         [strong_self cancelButtonHandler];
     };
 }
@@ -71,7 +76,11 @@
             self.dismissView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0];
             self.contentView.frame = contentViewFrame;
         }completion:^(BOOL finished) {
-            [self dismissViewControllerAnimated:false completion:nil];
+            [self dismissViewControllerAnimated:false completion:^{
+                if (self.dismissComplete && self.isConfirm) {
+                    self.dismissComplete();
+                }
+            }];
         }];
     }else {
         [self dismissViewControllerAnimated:false completion:nil];
