@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.resource     = 'PGDatePicker/PGDatePicker.bundle'
   s.frameworks   = "UIKit"
   s.requires_arc = true
-  s.dependency 'PGPickerView', '~> 1.3.0'
+  s.dependency 'PGPickerView', '1.3.0'
 end
  
  
